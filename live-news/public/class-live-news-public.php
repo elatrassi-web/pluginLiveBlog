@@ -122,4 +122,8 @@ class Live_News_Public {
 			}
 		}
 	}
+
+	public function return_false() {
+		return false;
+	}
 }

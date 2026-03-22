@@ -95,7 +95,7 @@ class Live_News {
 
 		// Prevent redirects on live news pages.
 		$this->loader->add_action( 'template_redirect', $plugin_public, 'disable_redirect_canonical', 1 );
-		$this->loader->add_filter( 'do_redirect_guess_arg_name', '__return_false' );
+		$this->loader->add_filter( 'do_redirect_guess_arg_name', $plugin_public, 'return_false' );
 	}
 
 	private function define_ajax_hooks() {
