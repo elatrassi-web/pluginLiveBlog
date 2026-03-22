@@ -1,0 +1,26 @@
+/* Votes Board */
+#live-news-results-board { background: #fff; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); margin-bottom: 25px; overflow: hidden; border: 1px solid #eaeaea; transition: background-color 0.5s;}
+.results-header { background: #004a99; color: #fff; padding: 15px 20px; font-weight: bold; font-size: 18px; text-transform: uppercase; }
+.results-body { padding: 20px; }
+.candidate-row { display: flex; align-items: center; margin-bottom: 15px; }
+.candidate-row:last-child { margin-bottom: 0; }
+.candidate-photo { width: 50px; height: 50px; border-radius: 50%; object-fit: cover; margin-right: 15px; background: #eee; border: 2px solid #ddd;}
+.candidate-data { flex-grow: 1; }
+.candidate-stats { display: flex; justify-content: space-between; font-weight: bold; margin-bottom: 5px; font-size: 15px; color: #333;}
+.candidate-votes-text { font-size: 12px; color: #777; font-weight: normal; }
+.progress-bar-bg { background: #e9ecef; height: 12px; border-radius: 6px; overflow: hidden; width: 100%; }
+.progress-bar-fill { height: 100%; transition: width 1.5s cubic-bezier(0.4, 0, 0.2, 1); border-radius: 6px;}
+
+/* Sports Board */
+#live-news-sports-board { background: #fff; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); margin-bottom: 25px; overflow: hidden; border: 1px solid #eaeaea; }
+.sports-header { background: #1a1a1a; color: #fff; display: flex; justify-content: space-between; align-items: center; padding: 10px 20px; font-weight: bold; }
+.sports-timer { font-size: 20px; color: #ffeb3b; font-variant-numeric: tabular-nums; letter-spacing: 2px; }
+.sports-period { font-size: 14px; text-transform: uppercase; color: #aaa; }
+.sports-body { display: flex; justify-content: space-between; align-items: center; padding: 20px; background: linear-gradient(180deg, #ffffff 0%, #f9f9f9 100%); }
+.sports-team { display: flex; align-items: center; width: 35%; }
+.team-right { justify-content: flex-end; }
+.sports-team-color { width: 16px; height: 16px; border-radius: 50%; margin-right: 10px; border: 2px solid #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
+.team-right .sports-team-color { margin-right: 0; margin-left: 10px; }
+.sports-team-name { font-size: 18px; font-weight: 800; color: #222; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sports-score { display: flex; align-items: center; justify-content: center; width: 30%; font-size: 36px; font-weight: 900; color: #111; letter-spacing: 2px; }
+.sports-score-divider { margin: 0 10px; color: #ccc; font-weight: 300; }
