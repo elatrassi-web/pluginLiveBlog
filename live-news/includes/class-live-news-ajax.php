@@ -229,12 +229,19 @@ class Live_News_Ajax {
 		global $wpdb;
 		$table_name = $wpdb->prefix . 'live_news_updates';
 		$messages = $wpdb->get_results( $wpdb->prepare( "SELECT id, time, content, importance FROM $table_name WHERE post_id = %d ORDER BY time DESC LIMIT 50", $post_id ) );
+		$is_pro = is_plugin_active( 'live-news-pro/live-news-pro.php' );
 
 		foreach ( $messages as $msg ) {
 			$content = $msg->content;
 			$content = preg_replace( '/<a[^>]+href="(https?:\/\/(www\.)?(twitter|x)\.com[^"]+)"[^>]*>.*?<\/a>/i', '$1', $content );
 			$content = str_replace( 'https://x.com/', 'https://twitter.com/', $content );
-			$content = preg_replace( '/(?:<p>)?(https?:\/\/(www\.)?twitter\.com\/[a-zA-Z0-9_]+\/status\/[0-9]+(?:\?[^\s<]+)?)(?:<\/p>)?/i', '<blockquote class="twitter-tweet"><div class="tweet-loading">⏳ Chargement du tweet en cours...</div><a href="$1"></a></blockquote>', $content );
+
+			if ( $is_pro ) {
+				$content = preg_replace( '/(?:<p>)?(https?:\/\/(www\.)?twitter\.com\/[a-zA-Z0-9_]+\/status\/[0-9]+(?:\?[^\s<]+)?)(?:<\/p>)?/i', '<blockquote class="twitter-tweet"><div class="tweet-loading">⏳ Chargement du tweet en cours...</div><a href="$1"></a></blockquote>', $content );
+			} else {
+				$content = preg_replace( '/(?:<p>)?(https?:\/\/(www\.)?twitter\.com\/[a-zA-Z0-9_]+\/status\/[0-9]+(?:\?[^\s<]+)?)(?:<\/p>)?/i', '<div style="padding:15px; border:1px solid #dee2e6; border-radius:8px; background:#f8f9fa; text-align:center;"><a href="$1" target="_blank" style="font-weight:bold; color:#1da1f2;">Voir le Tweet sur X</a><br><small style="color:#6c757d; font-size:11px;">🔒 Intégration du tweet disponible dans la version PRO</small></div>', $content );
+			}
+
 			$content = wpautop( $content );
 			$msg->content = $content;
 		}

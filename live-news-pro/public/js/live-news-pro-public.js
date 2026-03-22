@@ -82,12 +82,32 @@ document.addEventListener("DOMContentLoaded", function() {
 
 					var currentSportsStr = JSON.stringify(data);
 
-					// Ignore timer changes for flashing
 					var d1 = JSON.parse(currentSportsStr);
 					var d2 = lastSportsStr ? JSON.parse(lastSportsStr) : null;
-					if(d1 && d1.timer) d1.timer.value = '';
-					if(d2 && d2.timer) d2.timer.value = '';
-					var isScoreOrPeriodChange = d2 && JSON.stringify(d1) !== JSON.stringify(d2);
+
+					var isScoreOrPeriodChange = false;
+					if (d2) {
+						var m1 = d1.matches || [];
+						var m2 = d2.matches || [];
+						// Fallback check
+						if (m1.length === 0 && d1.team1) m1 = [d1];
+						if (m2.length === 0 && d2.team1) m2 = [d2];
+
+						if (m1.length !== m2.length) {
+							isScoreOrPeriodChange = true;
+						} else {
+							for(var i=0; i<m1.length; i++) {
+								var mm1 = JSON.parse(JSON.stringify(m1[i]));
+								var mm2 = JSON.parse(JSON.stringify(m2[i]));
+								if(mm1.timer) mm1.timer.value = '';
+								if(mm2.timer) mm2.timer.value = '';
+								if(JSON.stringify(mm1) !== JSON.stringify(mm2)) {
+									isScoreOrPeriodChange = true;
+									break;
+								}
+							}
+						}
+					}
 
 					if(isScoreOrPeriodChange) {
 						playAlertSound();
@@ -97,35 +117,74 @@ document.addEventListener("DOMContentLoaded", function() {
 					if(currentSportsStr !== lastSportsStr) {
 						lastSportsStr = currentSportsStr;
 
+						var matches = data.matches || [];
+						if (matches.length === 0 && data.team1) {
+							matches = [data]; // Fallback to old single-match structure
+						}
+
+						if(matches.length === 0) {
+							sportsBoard.style.display = 'none';
+							return;
+						}
+
 						sportsBoard.style.display = 'block';
 
-						if(data.team1) {
-							var el = document.getElementById('sports-board-t1-name'); if(el) el.textContent = data.team1.name;
-							el = document.getElementById('sports-board-t1-score'); if(el) el.textContent = data.team1.score;
-							el = document.getElementById('sports-board-t1-color'); if(el) el.style.backgroundColor = data.team1.color;
+						var html = '';
+						matches.forEach(function(match, idx) {
+							var t1 = match.team1 || {};
+							var t2 = match.team2 || {};
+							var timer = match.timer || {};
+
+							var displayTimer = timer.value || '00:00';
+							if(timer.status === 'running') {
+								var diff = Math.floor(Date.now() / 1000) - timer.last_update;
+								var pts = displayTimer.split(':');
+								var sec = parseInt(pts[0])*60 + parseInt(pts[1]) + diff;
+								var m = Math.floor(sec / 60);
+								var s = sec % 60;
+								displayTimer = (m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s;
+							}
+
+							html += '<div class="sports-match-item mb-3">';
+							html += '<div class="sports-header">';
+							html += '<div class="sports-period">' + (timer.period || '') + '</div>';
+							html += '<div class="sports-timer sports-timer-dyn" data-status="'+timer.status+'" data-last="'+timer.last_update+'" data-base="'+(timer.value||'00:00')+'">' + displayTimer + '</div>';
+							html += '</div>';
+
+							html += '<div class="sports-body">';
+							html += '<div class="sports-team">';
+							html += '<div class="sports-team-color" style="background-color:' + (t1.color||'#000') + ';"></div>';
+							html += '<div class="sports-team-name">' + (t1.name||'') + '</div>';
+							html += '</div>';
+
+							html += '<div class="sports-score">';
+							html += '<span>' + (t1.score||0) + '</span><span class="sports-score-divider">-</span><span>' + (t2.score||0) + '</span>';
+							html += '</div>';
+
+							html += '<div class="sports-team team-right">';
+							html += '<div class="sports-team-name">' + (t2.name||'') + '</div>';
+							html += '<div class="sports-team-color" style="background-color:' + (t2.color||'#000') + ';"></div>';
+							html += '</div>';
+							html += '</div>';
+
+							html += '</div>';
+						});
+
+						var renderArea = document.getElementById('sports-matches-render-area');
+						if(renderArea) {
+							renderArea.innerHTML = html;
 						}
 
-						if(data.team2) {
-							var el = document.getElementById('sports-board-t2-name'); if(el) el.textContent = data.team2.name;
-							el = document.getElementById('sports-board-t2-score'); if(el) el.textContent = data.team2.score;
-							el = document.getElementById('sports-board-t2-color'); if(el) el.style.backgroundColor = data.team2.color;
-						}
-
-						if(data.timer) {
-							var el = document.getElementById('sports-board-period'); if(el) el.textContent = data.timer.period;
-							el = document.getElementById('sports-board-timer');
-							if(el) {
-								if(data.timer.status === 'running') {
-									// In a real app we'd calculate the diff from last_update
-									var diff = Math.floor(Date.now() / 1000) - data.timer.last_update;
-									var pts = data.timer.value.split(':');
-									var sec = parseInt(pts[0])*60 + parseInt(pts[1]) + diff;
-									var m = Math.floor(sec / 60);
-									var s = sec % 60;
-									el.textContent = (m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s;
-								} else {
-									el.textContent = data.timer.value;
-								}
+						// Handle show_editor toggle styling
+						var feedWrapper = document.getElementById('live-news-feed-wrapper');
+						var isEditorActive = data.show_editor !== false;
+						if (!isEditorActive && feedWrapper) {
+							feedWrapper.style.display = 'none';
+						} else if (isEditorActive && feedWrapper && feedWrapper.style.display === 'none') {
+							// Check if there are messages to display before showing
+							var feedHtml = document.getElementById('live-news-feed');
+							if(feedHtml && feedHtml.innerHTML.indexOf('Le direct n\'a pas encore commencé') === -1) {
+								feedWrapper.style.display = 'block';
 							}
 						}
 					}
@@ -135,19 +194,20 @@ document.addEventListener("DOMContentLoaded", function() {
 
 	// If sports timer is running, update it locally every second
 	setInterval(function() {
-		if(!lastSportsStr) return;
-		try {
-			var data = JSON.parse(lastSportsStr);
-			if(data && data.timer && data.timer.status === 'running') {
-				var diff = Math.floor(Date.now() / 1000) - data.timer.last_update;
-				var pts = data.timer.value.split(':');
+		var dynTimers = document.querySelectorAll('.sports-timer-dyn');
+		dynTimers.forEach(function(el) {
+			if(el.getAttribute('data-status') === 'running') {
+				var lastUpdate = parseInt(el.getAttribute('data-last'));
+				var baseVal = el.getAttribute('data-base');
+
+				var diff = Math.floor(Date.now() / 1000) - lastUpdate;
+				var pts = baseVal.split(':');
 				var sec = parseInt(pts[0])*60 + parseInt(pts[1]) + diff;
 				var m = Math.floor(sec / 60);
 				var s = sec % 60;
-				var el = document.getElementById('sports-board-timer');
-				if(el) el.textContent = (m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s;
+				el.textContent = (m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s;
 			}
-		} catch(e) {}
+		});
 	}, 1000);
 
 });

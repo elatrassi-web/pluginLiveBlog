@@ -21,7 +21,45 @@
 			</div>
 		</div>
 
-		<?php do_action('live_news_pro_add_themes'); ?>
+		<?php if ( has_action( 'live_news_pro_add_themes' ) ) : ?>
+			<?php do_action('live_news_pro_add_themes'); ?>
+		<?php else : ?>
+			<div class="col-md-6 col-lg-3">
+				<div class="card h-100 border-0 shadow-sm theme-card disabled" style="cursor: default;">
+					<div class="card-body text-center p-4 position-relative">
+						<span class="badge bg-warning text-dark position-absolute top-0 end-0 m-2 fw-bold">🔒 PRO</span>
+						<span style="font-size: 50px; opacity: 0.5;">🗳️</span>
+						<h4 class="fw-bold mt-3 text-muted">Info + Votes</h4>
+						<p class="text-muted small mb-4">Le flux d'actualité combiné avec un tableau de scores interactif.</p>
+						<button class="btn btn-outline-secondary w-100 fw-bold" disabled>Générer ce direct</button>
+					</div>
+				</div>
+			</div>
+
+			<div class="col-md-6 col-lg-3">
+				<div class="card h-100 border-0 shadow-sm theme-card disabled" style="cursor: default;">
+					<div class="card-body text-center p-4 position-relative">
+						<span class="badge bg-warning text-dark position-absolute top-0 end-0 m-2 fw-bold">🔒 PRO</span>
+						<span style="font-size: 50px; opacity: 0.5;">📊</span>
+						<h4 class="fw-bold mt-3 text-muted">Sondage</h4>
+						<p class="text-muted small mb-4">Affichage uniquement du tableau des résultats pour une soirée électorale pure.</p>
+						<button class="btn btn-outline-secondary w-100 fw-bold" disabled>Générer ce direct</button>
+					</div>
+				</div>
+			</div>
+
+			<div class="col-md-6 col-lg-3">
+				<div class="card h-100 border-0 shadow-sm theme-card disabled" style="cursor: default;">
+					<div class="card-body text-center p-4 position-relative">
+						<span class="badge bg-warning text-dark position-absolute top-0 end-0 m-2 fw-bold">🔒 PRO</span>
+						<span style="font-size: 50px; opacity: 0.5;">⚽</span>
+						<h4 class="fw-bold mt-3 text-muted">Score Sportif</h4>
+						<p class="text-muted small mb-4">Chronomètre en direct, affichage des équipes et alertes buts/cartons.</p>
+						<button class="btn btn-outline-secondary w-100 fw-bold" disabled>Générer ce direct</button>
+					</div>
+				</div>
+			</div>
+		<?php endif; ?>
 
 	</div>
 

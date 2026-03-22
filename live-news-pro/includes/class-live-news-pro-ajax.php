@@ -29,25 +29,37 @@ class Live_News_Pro_Ajax {
 		check_ajax_referer( 'live_news_nonce_action', 'security' );
 
 		$post_id = intval( $_POST['post_id'] );
+		$show_editor = isset( $_POST['show_editor'] ) ? sanitize_text_field( $_POST['show_editor'] ) === 'true' : true;
 
-		$team1_name  = sanitize_text_field( $_POST['team1_name'] );
-		$team1_score = intval( $_POST['team1_score'] );
-		$team1_color = sanitize_text_field( $_POST['team1_color'] );
-		$team1_logo  = esc_url_raw( $_POST['team1_logo'] );
+		$matches_raw = isset( $_POST['matches'] ) && is_array( $_POST['matches'] ) ? $_POST['matches'] : array();
+		$matches_to_save = array();
 
-		$team2_name  = sanitize_text_field( $_POST['team2_name'] );
-		$team2_score = intval( $_POST['team2_score'] );
-		$team2_color = sanitize_text_field( $_POST['team2_color'] );
-		$team2_logo  = esc_url_raw( $_POST['team2_logo'] );
-
-		$timer_status = sanitize_text_field( $_POST['timer_status'] ); // stopped, running
-		$timer_value  = sanitize_text_field( $_POST['timer_value'] ); // MM:SS
-		$period       = sanitize_text_field( $_POST['period'] ); // 1MT, 2MT, Fin
+		foreach ( $matches_raw as $match ) {
+			$matches_to_save[] = array(
+				'team1' => array(
+					'name'  => sanitize_text_field( $match['team1_name'] ),
+					'score' => intval( $match['team1_score'] ),
+					'color' => sanitize_text_field( $match['team1_color'] ),
+					'logo'  => esc_url_raw( $match['team1_logo'] ),
+				),
+				'team2' => array(
+					'name'  => sanitize_text_field( $match['team2_name'] ),
+					'score' => intval( $match['team2_score'] ),
+					'color' => sanitize_text_field( $match['team2_color'] ),
+					'logo'  => esc_url_raw( $match['team2_logo'] ),
+				),
+				'timer' => array(
+					'status'      => sanitize_text_field( $match['timer_status'] ),
+					'value'       => sanitize_text_field( $match['timer_value'] ),
+					'period'      => sanitize_text_field( $match['period'] ),
+					'last_update' => time()
+				)
+			);
+		}
 
 		$data_to_save = array(
-			'team1' => array( 'name' => $team1_name, 'score' => $team1_score, 'color' => $team1_color, 'logo' => $team1_logo ),
-			'team2' => array( 'name' => $team2_name, 'score' => $team2_score, 'color' => $team2_color, 'logo' => $team2_logo ),
-			'timer' => array( 'status' => $timer_status, 'value' => $timer_value, 'period' => $period, 'last_update' => time() )
+			'show_editor' => $show_editor,
+			'matches'     => $matches_to_save
 		);
 
 		update_option( 'live_news_sports_' . $post_id, $data_to_save );

@@ -1,67 +1,23 @@
 <div class="col-xl-5 col-lg-12 mx-auto col-xl-8">
 	<div class="card border-0 shadow-sm h-100">
 		<div class="card-header bg-white border-bottom py-3 d-flex justify-content-between align-items-center">
-			<h4 class="mb-0 fw-bold"><i class="dashicons dashicons-controls-play fs-4 align-middle text-success"></i> Score Sportif</h4>
-			<div class="d-flex align-items-center gap-2">
-				<select id="sports_period" class="form-select form-select-sm fw-bold w-auto">
-					<option value="Avant-match">Avant-match</option>
-					<option value="1MT">1ère Mi-temps</option>
-					<option value="MT">Mi-temps</option>
-					<option value="2MT">2ème Mi-temps</option>
-					<option value="Prol.">Prolongations</option>
-					<option value="TAB">Tirs au but</option>
-					<option value="Fin">Terminé</option>
-				</select>
+			<h4 class="mb-0 fw-bold"><i class="dashicons dashicons-controls-play fs-4 align-middle text-success"></i> Multiplex / Scores Sportifs</h4>
+			<div class="form-check form-switch mt-1">
+				<input class="form-check-input" type="checkbox" role="switch" id="toggle_sports_editor" checked>
+				<label class="form-check-label fw-bold" for="toggle_sports_editor">Activer Rédaction du Live</label>
 			</div>
 		</div>
 		<div class="card-body bg-light">
 
-			<div class="row text-center mb-4 align-items-center">
-				<div class="col-5">
-					<h5 class="fw-bold mb-3">Équipe Domicile</h5>
-					<div class="mb-2"><input type="text" id="t1_name" class="form-control text-center fw-bold fs-5" placeholder="Nom équipe"></div>
-					<div class="mb-2 d-flex gap-2">
-						<input type="color" id="t1_color" class="form-control form-control-color w-25" value="#e2001a" title="Couleur">
-						<input type="text" id="t1_logo" class="form-control w-75" placeholder="URL Logo (opt.)">
-					</div>
-					<div class="d-flex justify-content-center align-items-center gap-3 mt-3">
-						<button class="btn btn-outline-secondary btn-sm rounded-circle px-2 py-1 fs-5 fw-bold btn-score" data-target="t1_score" data-val="-1">-</button>
-						<input type="number" id="t1_score" class="form-control text-center fs-1 fw-bold border-0 bg-transparent w-50" value="0" min="0">
-						<button class="btn btn-outline-primary btn-sm rounded-circle px-2 py-1 fs-5 fw-bold btn-score" data-target="t1_score" data-val="1">+</button>
-					</div>
-					<div class="mt-3">
-						<button class="btn btn-sm btn-outline-dark fw-bold w-100 sports-quick-insert" data-text="⚽ <strong>BUT !</strong> ">⚽ BUT !</button>
-					</div>
-				</div>
-
-				<div class="col-2">
-					<div class="bg-dark text-white rounded p-2 mb-2">
-						<input type="text" id="sports_timer" class="form-control text-center bg-transparent border-0 text-white fs-3 fw-bold p-0" value="00:00" placeholder="00:00">
-					</div>
-					<button id="sports_timer_toggle" class="btn btn-sm btn-success w-100 fw-bold mb-1" data-status="stopped">▶ Play</button>
-					<button id="sports_timer_reset" class="btn btn-sm btn-outline-secondary w-100" style="font-size:10px;">Reset</button>
-					<span class="fs-3 fw-bold text-muted d-block mt-3">-</span>
-				</div>
-
-				<div class="col-5">
-					<h5 class="fw-bold mb-3">Équipe Extérieur</h5>
-					<div class="mb-2"><input type="text" id="t2_name" class="form-control text-center fw-bold fs-5" placeholder="Nom équipe"></div>
-					<div class="mb-2 d-flex gap-2">
-						<input type="color" id="t2_color" class="form-control form-control-color w-25" value="#0056b3" title="Couleur">
-						<input type="text" id="t2_logo" class="form-control w-75" placeholder="URL Logo (opt.)">
-					</div>
-					<div class="d-flex justify-content-center align-items-center gap-3 mt-3">
-						<button class="btn btn-outline-secondary btn-sm rounded-circle px-2 py-1 fs-5 fw-bold btn-score" data-target="t2_score" data-val="-1">-</button>
-						<input type="number" id="t2_score" class="form-control text-center fs-1 fw-bold border-0 bg-transparent w-50" value="0" min="0">
-						<button class="btn btn-outline-primary btn-sm rounded-circle px-2 py-1 fs-5 fw-bold btn-score" data-target="t2_score" data-val="1">+</button>
-					</div>
-					<div class="mt-3">
-						<button class="btn btn-sm btn-outline-dark fw-bold w-100 sports-quick-insert" data-text="⚽ <strong>BUT !</strong> ">⚽ BUT !</button>
-					</div>
-				</div>
+			<div id="sports-matches-container">
+				<!-- Matches will be added here dynamically -->
 			</div>
 
-			<div class="p-3 bg-white rounded border mt-4">
+			<button type="button" id="btn-add-sports-match" class="btn dashed-btn w-100 py-3 mb-4 rounded">
+				<i class="dashicons dashicons-plus-alt2 align-middle"></i> Ajouter un match
+			</button>
+
+			<div class="p-3 bg-white rounded border mt-4 mb-4">
 				<h6 class="fw-bold mb-2">Actions rapides</h6>
 				<div class="d-flex flex-wrap gap-2">
 					<button class="btn btn-sm btn-warning sports-quick-insert" data-text="🟨 <strong>Carton Jaune :</strong> ">🟨 Jaune</button>
@@ -72,10 +28,10 @@
 			</div>
 
 			<button type="button" id="live_news_btn_sports_update" class="btn btn-success btn-lg w-100 fw-bold shadow-sm py-3 mt-4">
-				🔄 METTRE À JOUR LE SCORE
+				🔄 METTRE À JOUR LES SCORES
 			</button>
 
-			<div class="mt-5 border-top pt-4">
+			<div id="sports-editor-wrapper" class="mt-5 border-top pt-4">
 				<h4 class="mb-3 fw-bold"><i class="dashicons dashicons-edit fs-4 align-middle text-primary"></i> Rédaction du Live</h4>
 				<input type="hidden" id="live_news_edit_id" value="">
 				<div class="mb-3">

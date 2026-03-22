@@ -12,7 +12,9 @@
 .progress-bar-fill { height: 100%; transition: width 1.5s cubic-bezier(0.4, 0, 0.2, 1); border-radius: 6px;}
 
 /* Sports Board */
-#live-news-sports-board { background: #fff; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); margin-bottom: 25px; overflow: hidden; border: 1px solid #eaeaea; }
+#live-news-sports-board { margin-bottom: 25px; }
+.sports-match-item { background: #fff; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); margin-bottom: 15px; overflow: hidden; border: 1px solid #eaeaea; }
+.sports-match-item:last-child { margin-bottom: 0; }
 .sports-header { background: #1a1a1a; color: #fff; display: flex; justify-content: space-between; align-items: center; padding: 10px 20px; font-weight: bold; }
 .sports-timer { font-size: 20px; color: #ffeb3b; font-variant-numeric: tabular-nums; letter-spacing: 2px; }
 .sports-period { font-size: 14px; text-transform: uppercase; color: #aaa; }

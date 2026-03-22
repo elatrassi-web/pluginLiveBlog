@@ -60,38 +60,47 @@ class Live_News_Pro_Public {
 		$upload_dir = wp_upload_dir();
 		$sports_url = $upload_dir['baseurl'] . '/live-news/sports-' . $post_id . '.json';
 
-		// Fallback for AMP if needed
 		$saved_sports = get_option( 'live_news_sports_' . $post_id, array() );
-		$t1_name  = isset($saved_sports['team1']['name']) ? $saved_sports['team1']['name'] : 'Équipe 1';
-		$t1_score = isset($saved_sports['team1']['score']) ? $saved_sports['team1']['score'] : '0';
-		$t1_color = isset($saved_sports['team1']['color']) ? $saved_sports['team1']['color'] : '#000';
+		$show_editor = isset( $saved_sports['show_editor'] ) ? $saved_sports['show_editor'] : true;
 
-		$t2_name  = isset($saved_sports['team2']['name']) ? $saved_sports['team2']['name'] : 'Équipe 2';
-		$t2_score = isset($saved_sports['team2']['score']) ? $saved_sports['team2']['score'] : '0';
-		$t2_color = isset($saved_sports['team2']['color']) ? $saved_sports['team2']['color'] : '#000';
+		if ( ! $show_editor ) {
+			echo '<style>#live-news-feed-wrapper { display: none !important; }</style>';
+		}
 
-		$timer_val = isset($saved_sports['timer']['value']) ? $saved_sports['timer']['value'] : '00:00';
-		$period    = isset($saved_sports['timer']['period']) ? $saved_sports['timer']['period'] : 'Avant-match';
+		$matches = isset( $saved_sports['matches'] ) ? $saved_sports['matches'] : array();
+
+		// Fallback if old data format
+		if ( empty( $matches ) && isset( $saved_sports['team1'] ) ) {
+			$matches[] = $saved_sports;
+		}
+
 		?>
-		<div id="live-news-sports-board" data-sports-url="<?php echo esc_url( $sports_url ); ?>" style="<?php echo $is_amp ? 'display:block;' : 'display:none;'; ?>">
-			<div class="sports-header">
-				<div class="sports-period" id="sports-board-period"><?php echo esc_html($period); ?></div>
-				<div class="sports-timer" id="sports-board-timer"><?php echo esc_html($timer_val); ?></div>
-			</div>
-			<div class="sports-body">
-				<div class="sports-team">
-					<div class="sports-team-color" id="sports-board-t1-color" style="background-color:<?php echo esc_attr($t1_color); ?>;"></div>
-					<div class="sports-team-name" id="sports-board-t1-name"><?php echo esc_html($t1_name); ?></div>
-				</div>
-				<div class="sports-score">
-					<span id="sports-board-t1-score"><?php echo esc_html($t1_score); ?></span>
-					<span class="sports-score-divider">-</span>
-					<span id="sports-board-t2-score"><?php echo esc_html($t2_score); ?></span>
-				</div>
-				<div class="sports-team team-right">
-					<div class="sports-team-name" id="sports-board-t2-name"><?php echo esc_html($t2_name); ?></div>
-					<div class="sports-team-color" id="sports-board-t2-color" style="background-color:<?php echo esc_attr($t2_color); ?>;"></div>
-				</div>
+		<div id="live-news-sports-board" data-sports-url="<?php echo esc_url( $sports_url ); ?>" style="<?php echo $is_amp && !empty($matches) ? 'display:block;' : 'display:none;'; ?>">
+			<div id="sports-matches-render-area">
+				<?php
+				if ( $is_amp && ! empty( $matches ) ) {
+					foreach ( $matches as $index => $match ) {
+						$t1_name  = isset($match['team1']['name']) ? $match['team1']['name'] : '';
+						$t1_score = isset($match['team1']['score']) ? $match['team1']['score'] : '0';
+						$t1_color = isset($match['team1']['color']) ? $match['team1']['color'] : '#000';
+
+						$t2_name  = isset($match['team2']['name']) ? $match['team2']['name'] : '';
+						$t2_score = isset($match['team2']['score']) ? $match['team2']['score'] : '0';
+						$t2_color = isset($match['team2']['color']) ? $match['team2']['color'] : '#000';
+
+						$timer_val = isset($match['timer']['value']) ? $match['timer']['value'] : '00:00';
+						$period    = isset($match['timer']['period']) ? $match['timer']['period'] : '';
+
+						echo '<div class="sports-match-item mb-3">';
+						echo '<div class="sports-header"><div class="sports-period">'.esc_html($period).'</div><div class="sports-timer">'.esc_html($timer_val).'</div></div>';
+						echo '<div class="sports-body">';
+						echo '<div class="sports-team"><div class="sports-team-color" style="background-color:'.esc_attr($t1_color).';"></div><div class="sports-team-name">'.esc_html($t1_name).'</div></div>';
+						echo '<div class="sports-score"><span>'.esc_html($t1_score).'</span><span class="sports-score-divider">-</span><span>'.esc_html($t2_score).'</span></div>';
+						echo '<div class="sports-team team-right"><div class="sports-team-name">'.esc_html($t2_name).'</div><div class="sports-team-color" style="background-color:'.esc_attr($t2_color).';"></div></div>';
+						echo '</div></div>';
+					}
+				}
+				?>
 			</div>
 		</div>
 		<?php

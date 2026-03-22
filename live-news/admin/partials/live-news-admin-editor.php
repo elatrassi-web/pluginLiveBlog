@@ -15,12 +15,21 @@
 			</div>
 		</div>
 
-		<div class="bg-dark text-white px-3 py-2 rounded-pill shadow-sm d-inline-flex align-items-center border border-secondary flex-nowrap" title="Statistiques d'audience">
-			<div class="d-flex align-items-center pe-3 border-end border-secondary text-nowrap">
-				<span class="live-indicator me-2"></span>
-				<span class="fw-bold fs-4 text-danger" id="live-viewer-count">0</span>
-				<span class="fw-normal fs-6 text-light ms-2 text-uppercase d-none d-md-inline" style="letter-spacing: 1px;">En direct</span>
-			</div>
+		<div class="bg-dark text-white px-3 py-2 rounded-pill shadow-sm d-inline-flex align-items-center border border-secondary flex-nowrap position-relative" title="Statistiques d'audience">
+			<?php if ( ! is_plugin_active('live-news-pro/live-news-pro.php') ) : ?>
+				<span class="position-absolute top-0 start-50 translate-middle badge rounded-pill bg-warning text-dark fw-bold" style="font-size: 10px; z-index:10;">🔒 PRO</span>
+				<div class="d-flex align-items-center pe-3 border-end border-secondary text-nowrap" style="opacity: 0.5;">
+					<span class="me-2" style="width:12px; height:12px; background:#666; border-radius:50%;"></span>
+					<span class="fw-bold fs-4 text-secondary">?</span>
+					<span class="fw-normal fs-6 text-light ms-2 text-uppercase d-none d-md-inline" style="letter-spacing: 1px;">En direct</span>
+				</div>
+			<?php else : ?>
+				<div class="d-flex align-items-center pe-3 border-end border-secondary text-nowrap">
+					<span class="live-indicator me-2"></span>
+					<span class="fw-bold fs-4 text-danger" id="live-viewer-count">0</span>
+					<span class="fw-normal fs-6 text-light ms-2 text-uppercase d-none d-md-inline" style="letter-spacing: 1px;">En direct</span>
+				</div>
+			<?php endif; ?>
 			<div class="d-flex align-items-center ps-3 text-nowrap">
 				<span class="fs-5 me-2">👁️</span>
 				<span class="fw-bold fs-4 text-info" id="total-viewer-count">0</span>
@@ -42,25 +51,30 @@
 					<div class="card-body">
 						<input type="hidden" id="live_news_edit_id" value="">
 
-						<div class="p-3 bg-light rounded border mb-4 d-flex flex-wrap gap-2 align-items-center">
-							<span class="badge bg-primary text-uppercase px-2 py-2"><i class="dashicons dashicons-lightning"></i> Raccourcis</span>
-							<div class="position-relative d-inline-block">
-								<button type="button" class="btn btn-outline-dark btn-sm fw-bold" id="live_news_emoji_btn">😀 Emojis ▾</button>
-								<div id="live_news_emoji_picker" class="emoji-panel">
-									<div class="d-flex flex-wrap gap-1">
-										<?php
-										$emojis = ['🔴','🟢','🔵','🟡','⚠️','🚨','🔥','⏳','📊','📉','📈','🎙️','🗣️','📣','🗳️','✅','❌','🛑','🏆','🥇','👏','📌','📍','📸','🎥','📺','🗞️','💡','👉','👇'];
-										foreach ( $emojis as $e ) { echo '<button type="button" class="btn btn-light btn-sm live-emoji-item fs-5 p-1" style="width:36px; height:36px;">'.$e.'</button>'; }
-										?>
+						<div class="p-3 bg-light rounded border mb-4 d-flex flex-wrap gap-2 align-items-center position-relative">
+							<?php if ( ! is_plugin_active('live-news-pro/live-news-pro.php') ) : ?>
+								<div class="position-absolute w-100 h-100 top-0 start-0 d-flex justify-content-center align-items-center" style="background: rgba(248,249,250,0.8); z-index: 5;">
+									<span class="badge bg-warning text-dark fw-bold fs-6 shadow-sm">🔒 Fonctionnalités PRO</span>
+								</div>
+							<?php endif; ?>
+
+							<div style="<?php echo !is_plugin_active('live-news-pro/live-news-pro.php') ? 'opacity: 0.4; pointer-events: none;' : ''; ?> display: contents;">
+								<span class="badge bg-primary text-uppercase px-2 py-2"><i class="dashicons dashicons-lightning"></i> Raccourcis</span>
+								<div class="position-relative d-inline-block">
+									<button type="button" class="btn btn-outline-dark btn-sm fw-bold" id="live_news_emoji_btn">😀 Emojis ▾</button>
+									<div id="live_news_emoji_picker" class="emoji-panel">
+										<div class="d-flex flex-wrap gap-1">
+											<?php
+											$emojis = ['🔴','🟢','🔵','🟡','⚠️','🚨','🔥','⏳','📊','📉','📈','🎙️','🗣️','📣','🗳️','✅','❌','🛑','🏆','🥇','👏','📌','📍','📸','🎥','📺','🗞️','💡','👉','👇'];
+											foreach ( $emojis as $e ) { echo '<button type="button" class="btn btn-light btn-sm live-emoji-item fs-5 p-1" style="width:36px; height:36px;">'.$e.'</button>'; }
+											?>
+										</div>
 									</div>
 								</div>
+								<div class="vr mx-1"></div>
+								<button type="button" class="btn btn-outline-secondary btn-sm quick-insert-btn bg-white" data-text="🔴 <strong>ALERTE INFO :</strong> ">🔴 Urgent</button>
+								<button type="button" class="btn btn-outline-secondary btn-sm quick-insert-btn bg-white" data-text="🎙️ <strong>Prise de parole :</strong> ">🎙️ Déclaration</button>
 							</div>
-							<div class="vr mx-1"></div>
-							<button type="button" class="btn btn-outline-secondary btn-sm quick-insert-btn bg-white" data-text="🔴 <strong>ALERTE INFO :</strong> ">🔴 Urgent</button>
-							<button type="button" class="btn btn-outline-secondary btn-sm quick-insert-btn bg-white" data-text="🎙️ <strong>Prise de parole :</strong> ">🎙️ Déclaration</button>
-							<?php if ( $selected_theme === 'elections' ) : ?>
-								<button type="button" class="btn btn-outline-secondary btn-sm quick-insert-btn bg-white" data-text="📊 <strong>Nouveaux résultats :</strong> ">📊 Résultats</button>
-							<?php endif; ?>
 						</div>
 
 						<div class="mb-4">
