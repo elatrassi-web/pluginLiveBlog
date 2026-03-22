@@ -34,7 +34,9 @@ class Live_News_Loader {
 
 	public function run() {
 		foreach ( $this->filters as $hook ) {
-			if ( is_string( $hook['callback'] ) ) {
+			if ( is_object( $hook['component'] ) && is_string( $hook['callback'] ) ) {
+				add_filter( $hook['hook'], array( $hook['component'], $hook['callback'] ), $hook['priority'], $hook['accepted_args'] );
+			} elseif ( is_string( $hook['callback'] ) ) {
 				add_filter( $hook['hook'], $hook['callback'], $hook['priority'], $hook['accepted_args'] );
 			} else {
 				add_filter( $hook['hook'], array( $hook['component'], $hook['callback'] ), $hook['priority'], $hook['accepted_args'] );
@@ -42,7 +44,9 @@ class Live_News_Loader {
 		}
 
 		foreach ( $this->actions as $hook ) {
-			if ( is_string( $hook['callback'] ) ) {
+			if ( is_object( $hook['component'] ) && is_string( $hook['callback'] ) ) {
+				add_action( $hook['hook'], array( $hook['component'], $hook['callback'] ), $hook['priority'], $hook['accepted_args'] );
+			} elseif ( is_string( $hook['callback'] ) ) {
 				add_action( $hook['hook'], $hook['callback'], $hook['priority'], $hook['accepted_args'] );
 			} else {
 				add_action( $hook['hook'], array( $hook['component'], $hook['callback'] ), $hook['priority'], $hook['accepted_args'] );
