@@ -1,0 +1,9 @@
+/* Add specific styles for the PRO admin features */
+.candidate-block, .match-block { border: 1px solid #dee2e6; border-radius: 6px; padding: 15px; margin-bottom: 15px; position: relative; }
+.remove-candidate, .remove-match { position: absolute; top: 10px; right: 10px; color: #dc3545; cursor: pointer; text-decoration: none; font-size: 1.2rem; }
+.remove-candidate:hover, .remove-match:hover { color: #a71d2a; }
+
+.sports-quick-insert { cursor: pointer; border: 1px solid #ccc; padding: 4px 8px; border-radius: 4px; background: #f8f9fa; font-size: 12px; }
+.sports-quick-insert:hover { background: #e9ecef; }
+
+.btn-score { width: 30px; height: 30px; padding: 0; line-height: 1; display: flex; align-items: center; justify-content: center; }
